@@ -1,3 +1,4 @@
+"use client"
 import Navbar from "@/components/custom/Navbar";
 
 export default function RootLayout({
