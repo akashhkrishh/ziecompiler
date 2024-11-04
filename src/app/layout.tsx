@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Poppins } from 'next/font/google';
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/custom/theme-provider";
+import ReduxProvider from "@/redux/Provider";
+
+
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -13,7 +16,7 @@ export const metadata: Metadata = {
   description: process.env.APP_DESCRIPTION,
 };
 
-export default function RootLayout({
+export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -22,15 +25,17 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
+        <body className={`${poppins.className} antialiased `}>
+          <ReduxProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+          </ReduxProvider>
         </body>
       </html>
     </>
