@@ -2,6 +2,6 @@
   "/api/submit/route": "app/api/submit/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/_not-found/page": "app/_not-found/page.js",
-  "/[slug]/page": "app/[slug]/page.js",
-  "/(root)/page": "app/(root)/page.js"
+  "/(root)/page": "app/(root)/page.js",
+  "/[slug]/page": "app/[slug]/page.js"
 }
