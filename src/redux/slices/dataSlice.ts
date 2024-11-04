@@ -1,42 +1,49 @@
-import { DataProps } from "@/utils/type";
+import { DataProps, SubmitCodePayload } from "@/utils/type";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+// Initial state for your slice
 const initialState: DataProps = {
     language_id: 71,
     language_name: "",
     stdin: "",
-    source_code: " ",
+    source_code: "",
     output: null,
     error: null,
     loading: false,
     status: null,
-    language_title:"",
-    fileName:""
+    language_title: "",
+    fileName: ""
 };
 
 
-// Create an async thunk for submitting code
-export const submitCode = createAsyncThunk('data/submitCode', async (data) => {
-    const response = await fetch('/api/submit', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
 
-    // Check if the response is OK
-    if (!response.ok) {
-        throw new Error('Failed to submit code');
+// Create an async thunk for submitting code
+// @ts-nocheck
+export const submitCode = createAsyncThunk<any, SubmitCodePayload, { rejectValue: string }>(
+    'data/submitCode',
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await fetch('/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit code');
+            }
+            return await response.json(); // Adjust according to your API response structure
+        } catch (error) {
+            return rejectWithValue(error instanceof Error ? error.message : 'An unknown error occurred');
+        }
     }
-    const result = await response.json();
-    // setOutput(result)
-    return result; // Adjust according to your API response structure
-});
+);
 
 const dataSlice = createSlice({
     name: "data",
-    initialState: initialState,
+    initialState,
     reducers: {
         setLanguageId(state, action) {
             state.language_id = action.payload;
@@ -56,42 +63,41 @@ const dataSlice = createSlice({
         setOutput(state, action) {
             state.output = action.payload;
         },
-        
         setFileName(state, action) {
             state.fileName = action.payload;
         },
-        
-        
-    
-        
+        setStatus(state, action) {
+            state.status = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
             .addCase(submitCode.pending, (state) => {
                 state.loading = true;
                 state.error = null;
-                state.status = "Running"
+                state.status = "Running";
             })
             .addCase(submitCode.fulfilled, (state, action) => {
                 state.loading = false;
-                state.output = action.payload; // Adjust this based on your API response
-                // Adjust according to response structure
-                if(action.payload.status.description == 'Runtime Error (NZEC)'){
-                    state.status = "Runtime Error"
-                }else if(action.payload.status.description == 'Compilation Error'){
-                    state.status = "Compile Error"
-                }else{
+                state.output = action.payload; // Adjust based on your API response
+                if (action.payload.status.description === 'Runtime Error (NZEC)') {
+                    state.status = "Runtime Error";
+                } else if (action.payload.status.description === 'Compilation Error') {
+                    state.status = "Compile Error";
+                } else {
                     state.status = "Finish"; 
-                    
                 }
             })
             .addCase(submitCode.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message;
-                 state.status = "error"
+                state.error = action.payload || 'Failed to submit code';
+                state.status = "Error";
             });
     },
 });
 
-export const { setSourceCode, setFileName, setLanguageTitle, setStdin, setLanguageName, setOutput, setLanguageId } = dataSlice.actions;
+// Export actions
+export const { setSourceCode, setStatus,setFileName, setLanguageTitle, setStdin, setLanguageName, setOutput, setLanguageId } = dataSlice.actions;
+
+// Export the reducer
 export default dataSlice.reducer;

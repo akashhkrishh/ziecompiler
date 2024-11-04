@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { ComponentType, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { Monaco } from '@monaco-editor/react';
@@ -6,7 +6,7 @@ import { Monaco } from '@monaco-editor/react';
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
 // Define the type for the onChange callback
-type OnChange = (value: string | undefined, event: any) => void;
+type OnChange = (value: string | undefined, event: Event) => void;
 
 // Define the EditorProps interface
 interface EditorProps {
@@ -27,7 +27,7 @@ const BasicEditor: React.FC<EditorProps> = ({
   const { resolvedTheme } = useTheme();
   const monacoRef = useRef<Monaco | null>(null); // Create a ref to store the monaco instance
 
-  const handleEditorDidMount = (editor: any, monaco: Monaco) => {
+  const handleEditorDidMount = (_editor: ComponentType<EditorProps>, monaco: Monaco) => {
     monacoRef.current = monaco; // Store the monaco instance in the ref
     defineTheme(monaco,  resolvedTheme || 'light'); // Call defineTheme here
   };
@@ -37,40 +37,58 @@ const BasicEditor: React.FC<EditorProps> = ({
       base: 'vs',
       inherit: true,
       rules: [
-        { token: 'comment', foreground: '008800', fontStyle: 'italic' },
-        { token: 'keyword', foreground: '0000FF' },
-        { token: 'number', foreground: 'FF0000' }, // Changed color for numbers
-        { token: 'string', foreground: 'A31515' },
-        { token: 'variable', foreground: '000000' },
-        { token: 'function', foreground: 'A31515' }, // Added rule for functions
+        { token: 'comment', foreground: '5b5b5b', fontStyle: 'italic' }, // Dark gray
+        { token: 'keyword', foreground: '007acc', fontStyle: 'bold' },   // Blue
+        { token: 'string', foreground: '3a5e3c' },                       // Green
+        { token: 'number', foreground: 'b58900' },                       // Yellow
+        { token: 'variable', foreground: '000000' },                     // Black
+        { token: 'function', foreground: '6c6c6c' },                     // Gray
+                     // Blue        
+                 // Orange
+
       ],
       colors: {
-        'editor.foreground': '#000000',
-        'editor.background': '#FFFFFF',
-        'editorCursor.foreground': '#000000',
-        'editor.lineHighlightBackground': '#0000FF20',
-        'editorLineNumber.foreground': '#008800',
-      },
+        "editor.foreground": "#000000",                     // Default text color
+        "editor.background": "#FFFFFF",                     // Background color
+        "editorCursor.foreground": "#000000",               // Cursor color
+        "editor.lineHighlightBackground": "#0000FF20",     // Line highlight background (semi-transparent blue)
+        "editorLineNumber.foreground": "#008800",           // Line number color
+        "editor.selectionBackground": "#B3D4FC",            // Selection background color            // Line highlight border color
+    }
+    ,
     };
 
     const darkTheme = {
       base: 'vs-dark',
       inherit: true,
       rules: [
-        { token: 'comment', foreground: '00FF00', fontStyle: 'italic' }, // Changed color for comments
-        { token: 'keyword', foreground: '569CD6' },
-        { token: 'number', foreground: 'FF6347' }, // Changed color for numbers
-        { token: 'string', foreground: 'CE9178' },
-        { token: 'variable', foreground: 'DCDCAA' },
-        { token: 'function', foreground: 'FFB800' }, // Added rule for functions
+        { token: 'comment', foreground: '8b8b8b', fontStyle: 'italic' }, // Gray
+        { token: 'keyword', foreground: 'ff79c6', fontStyle: 'bold' },   // Pink
+        { token: 'string', foreground: 'a6e22e' },                       // Green
+        { token: 'number', foreground: 'd19a66' },                       // Orange
+        { token: 'variable', foreground: 'ffffff' },                     // White
+        { token: 'function', foreground: '66d9ef' },                     // Light blue
+        
       ],
       colors: {
-        'editor.foreground': '#FFFFFF',
-        'editor.background': '#020817',
-        'editorCursor.foreground': '#FFFFFF',
-        'editor.lineHighlightBackground': '#2A2A2A',
-        'editorLineNumber.foreground': '#D4D4D4',
-      },
+        "editor.foreground": "#FFFFFF",                     // Default text color
+        "editor.background": "#020817",                     // Background color
+        "editorCursor.foreground": "#FFFFFF",               // Cursor color
+        "editor.lineHighlightBackground": "#0d1a2e",     // Line highlight background (semi-transparent blue)
+        "editorLineNumber.foreground": "#B0B0B0",           // Line number color
+        "editor.selectionBackground": "#4A90E2",            // Selection background color
+        "editor.selectionForeground": "#FFFFFF",            // Selection text color
+        "editor.wordHighlightBackground": "#FFD70020",      // Word highlight background (semi-transparent yellow)
+        "editor.wordHighlightStrongBackground": "#FF634720",// Strong word highlight background (semi-transparent tomato)
+        "editorIndentGuide.background": "#444444",          // Indent guide color
+        "editorIndentGuide.activeBackground": "#666666",    // Active indent guide color
+        "editor.findMatchBackground": "#FF000020",          // Find match background (semi-transparent red)
+        "editor.findMatchHighlightBackground": "#FF450020", // Highlight match background (semi-transparent orange)
+        "editorWhitespace.foreground": "#4D4D4D",           // Whitespace characters color
+        "editor.codeLens.foreground": "#AAAAAA",            // Code lens color (for inline hints)
+                 // Line highlight border color
+    }
+    
     };
 
     const themeToDefine = theme === 'dark' ? darkTheme : lightTheme;
@@ -103,7 +121,7 @@ const BasicEditor: React.FC<EditorProps> = ({
           horizontal: 'hidden', // Hide horizontal scrollbar
         },
         
-        fontSize: 14,
+        fontSize: 16,
         selectOnLineNumbers: true,
       }}
       onMount={handleEditorDidMount}

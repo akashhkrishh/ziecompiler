@@ -1,20 +1,19 @@
 "use client";
+// @ts-nocheck
+import { AppDispatch, RootState } from '@/redux/store';
 
-import { RootState } from '@/redux/store';
-import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFullScreen } from '@/redux/slices/layoutSlice';
 import { ModeToggle } from './mode-toggle';
-import { ArrowBigDown, ArrowBigDownDash, Check, ChevronDown, CircleCheckBig, CircleDot, CircleDotDashed, Cpu, Dot, Download, File, Hourglass, Loader, Maximize, Minimize, PlayIcon, ShieldAlert, Timer } from 'lucide-react';
+import { CircleCheckBig , CircleDotDashed,  Download,  Maximize, Minimize, PlayIcon, ShieldAlert, } from 'lucide-react';
 import { Button } from '../ui/button';
 import { handleDownload } from '@/utils/utils';
 import { setOutput, submitCode } from '@/redux/slices/dataSlice';
-import { useParams } from 'next/navigation';
-import { useRouter } from 'next/router';
+ 
 import { DialogDemo } from './dialog-demo';
 import ZieLogo from './ZieLogo';
-import { Label } from '@radix-ui/react-label';
-
+import { SubmitCodePayload } from '@/utils/type';
+ 
 
 const Navbar: React.FC = () => {
     // const param =useParams<{ slug: string; }>()
@@ -22,14 +21,15 @@ const Navbar: React.FC = () => {
 
 
     const { isFullScreen } = useSelector((state: RootState) => state.layout);
-    const { source_code, stdin, language_id, loading, language_title, fileName, status, output } = useSelector((state: RootState) => state.data);
+    const { source_code, stdin, language_id, loading, language_title, fileName, status } = useSelector((state: RootState) => state.data);
     const dispatch = useDispatch();
+    const dispatchNew = useDispatch<AppDispatch>();
 
     const handleExecuter = async () => {
         dispatch(setOutput(null));
-        const data = { source_code, language_id, stdin };
+        const data:SubmitCodePayload = { source_code, language_id, stdin };
         try {
-            await dispatch(submitCode(data)); // Ensure submitCode is a thunk
+            await dispatchNew(submitCode(data)); // Ensure submitCode is a thunk
         } catch (error) {
             console.error('Error:', error);
         }
@@ -127,7 +127,7 @@ const Navbar: React.FC = () => {
                     <Button variant={"outline"} className='bg-green-600  text-white' disabled={loading} size={"icon"} onClick={handleExecuter}>
                         {<PlayIcon />}
                     </Button>
-                    <Button variant={"outline"} size={"icon"} onClick={() => handleDownload(source_code!)}>
+                    <Button variant={"outline"} size={"icon"} onClick={() => handleDownload(source_code!,fileName!)}>
                         <Download />
                     </Button>
                     <ModeToggle />

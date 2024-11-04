@@ -41,7 +41,12 @@ export interface DataProps {
   status?: null | string;
   fileName?: string,
 }
-
+export interface SubmitCodePayload {
+  stdin?: string;
+  source_code?: string;
+  language_id?: number;
+  // Add any additional properties needed for the submission
+}
 export interface Language {
   id: number;
   name: string;
@@ -49,4 +54,11 @@ export interface Language {
   fileName: string;
   codeExample: string;
   slug: string; // New slug field
+}
+
+export interface SubmitCodeRequest {
+  language_id?: number | null;
+  stdin?: string;
+  source_code?: string;
+  fileName?: string;
 }

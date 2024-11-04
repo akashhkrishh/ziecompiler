@@ -1,27 +1,19 @@
-import { useState } from "react";
+ 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+ 
 import { ChevronDown } from "lucide-react";
 import { languages } from "@/constants/languages";
 import Link from "next/link";
 
-export function DialogDemo({ language_title = "", initialUsername = "@peduarte" }) {
-  
-  const handleSave = () => {
-    // Handle form submission logic here
-    // console.log("Saved:", { name, username });
-    // You can close the dialog here if needed
-  };
+export function DialogDemo({ language_title = "", }) {
+ 
 
   return (
     <Dialog>
@@ -38,7 +30,7 @@ export function DialogDemo({ language_title = "", initialUsername = "@peduarte" 
         {
           languages.map((items,index)=>{
             return(
-              <Link className="p-2 hover:bg-slate-800 rounded-md" key={index}  href={"/"+items.lang}>{items.name}</Link>
+              <Link className="p-2 hover:bg-slate-100  dark:hover:hover:bg-slate-800 rounded-md" key={index}  href={"/"+items.lang}>{items.name}</Link>
             )
           })
         }

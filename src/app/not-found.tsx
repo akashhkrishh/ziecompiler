@@ -1,4 +1,4 @@
-import Navbar from '@/components/custom/nav-bar'
+
 import React from 'react'
 import notFound from "@/assets/svg/notfound.svg"
 import Image from 'next/image'

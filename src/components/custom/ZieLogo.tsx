@@ -6,20 +6,20 @@ import DarkLogo from '@/assets/svg/ziecompiler_logo_dark.svg'
 function ZieLogo() {
   return (
     <div className='h-full '>
-    
-    <Image
+
+      <Image
         className='h-full w-10 aspect-square hidden dark:flex'
         src={LightLogo}
         alt='ZieLogo'
         priority
-        />
-    <Image
-    priority
+      />
+      <Image
+        priority
         className='h-full w-10 aspect-square dark:hidden'
         src={DarkLogo}
         alt='ZieLogo'
-        />
-   
+      />
+
     </div>
   )
 }
